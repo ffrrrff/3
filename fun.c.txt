@@ -1,0 +1,226 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+
+struct Item {
+// указатель на информацию
+InfoType *info;
+// версия элемента
+RelType release;
+// указатель на следующий элемент с данным составным ключом
+Item *next;
+// опциональные поля, для оптимизации выполнения операций,
+// состав и наличие которых должны быть обоснованы:
+// ключ элемента из 1­го пространства ключей
+KeyType1 key1;
+// ключ элемента из 2­го пространства ключей
+KetType2 key2;
+// связь с элементом 1­го пространства ключей по индексу
+IndexType1 ind1;
+// связь с элементом 2­го пространства ключей по индексу
+IndexType2 ind2;
+// связь с элементом 2­го пространства ключей по указателю
+PointerType1 *p1;
+// связь с элементом 2­го пространства ключей по указателю
+PointerType2 *p2;
+};
+
+struct KeySpace1 {
+// ключ элемента
+KeyType1 key;
+// указатель на информацию
+Item *info;
+};
+struct KeySpace2 {
+// ключ элемента
+KeyType2 key;
+// указатель на информацию
+Node2 *node;
+// указатель на следующий элемент
+KeySpace2 *next;
+};
+
+
+struct Item{
+	int key;      //ключ элемента
+   int release;  //номер версии элемента
+	char *info;   //указатель на информацию
+	Item *next;   //указатель на следующий элемент
+};
+
+
+Item *ptab = NULL;
+int input(); //проверка ввода данных
+
+char * Mes[] = {"1. Insert element in table\n", "2. Delete element from table\n", "3. Show all table\n", "4. Quit\n"};
+
+int MesCount = sizeof(Mes)/sizeof(Mes[0]);
+
+//Первоначальное меню
+int Menu(){
+  int answer = 1;
+  printf("Menu\n");
+
+  ////Начало: выбор действия
+
+  printf("1. Insert element in table\n", "2. Delete element from table\n", "3. Show all table\n", "4. Quit\n");
+  //do{
+    //for(int j = 0; j < MesCount; j++)
+      //cout << Mes[j];
+    //cout << "Make your choice: ";
+    scanf(&answer);
+    while ((answer>4)&&(answer<1))
+        printf("INCORRECT Repeat enter");
+        answer = 0;
+        scanf(&answer);
+    
+  //}while(answer < 1 || answer > MesCount);
+  ////Конец: выбор действия\\\\
+
+  return (answer);
+}
+
+void Insert(); //Организационное занесение элемента в таблицу
+int Push(int, int, char *); //занесение элемента в таблицу
+
+void Delete(); //
+int del2(int, int); 
+
+void View(); //Просмотр таблицы
+
+void Quit(); //выход
+
+//другие функции
+int search(int); //поиск последней версии элемента по ключу
+char * delInfo(char *); //очищение памяти у информации
+char * dupl(char *in); //выделение памяти для информации
+
+
+int main(){
+  
+  int answer = 1;
+  
+  do{
+    answer = Menu();
+    //func[answer]();
+  }while(answer);
+  return 0;
+}
+
+int Push(int k, int v, char * in){
+  Item *tmp;
+  tmp = new Item;
+
+
+  tmp->key = k;
+  tmp->release = v;
+  tmp->info = dupl(in);
+  tmp->next = ptab;
+  ptab = tmp;
+  return 1;
+}
+
+void Insert(){
+  int key, vers;
+  char buf[80];
+
+  cout << "Enter key: ";
+  key = input();
+  vers = search(key)+1;
+ 
+  if(Push(key, vers, buf))
+}
+
+int del2(int k, int v){
+  Item *cur, **pptr = &ptab;
+  int kolvoud=0;
+  if(v)
+    //Если удаляем по ключу и версии элемента
+    while(*pptr){
+		if(((*pptr)->key == k) && ((*pptr)->release == v)){
+        cur = *pptr;
+        *pptr = cur->next;
+        delInfo(cur->info);
+        free(cur);
+        return 1;
+		}
+		pptr = &(*pptr)->next;
+    }
+  else{
+   
+    while(*pptr){
+		if((*pptr)->key == k){
+        cur = *pptr;
+        *pptr = cur->next;
+        delInfo(cur->info);
+		  free(cur);
+		  kolvoud = kolvoud + 1;
+		}
+      else
+		  pptr = &(*pptr)->next;
+	 }
+    return kolvoud;
+  }
+  return 0;
+}
+
+void Delete(){
+  int key, vers, kdel;
+  char buf[80];
+
+ 
+}
+
+void View(){
+  Item *cur = ptab;
+  if(!cur){
+    printf("The table is empty!");
+    return;
+  }
+  printf(" key \t| vers \t|  information\n===================\n");
+  for(; cur; cur = cur->next)
+    printf( "cur-> key\n| cur->release\n cur->info\n");
+}
+
+void Quit(){
+  Item *tmp;
+
+  while(ptab){
+    tmp = ptab;
+    delInfo(ptab->info);
+    ptab = ptab->next;
+    free(tmp);
+  }
+}
+
+int input(){
+  int a = 0;
+  scanf(&a);
+  while(!a){
+    if(a=='EOF')
+      break;
+
+  }
+  return a;
+}
+
+int search(int k){
+  Item *cur;
+  for(cur = ptab; cur; cur = cur->next){
+    if(cur->key == k)
+      return cur->release;
+  }
+  return 0;
+}
+
+char * dupl(char *in)
+{
+	char *res = (char*)calloc(strlen(in) + 1,sizeof(char);
+	strcpy(res, in);
+	return res;
+}
+
+char * delInfo(char * in){
+  free(in);
+  return NULL;
+}
